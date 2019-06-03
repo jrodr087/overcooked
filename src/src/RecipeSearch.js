@@ -13,7 +13,6 @@ var quoteregex = /"([^"]*)"/g;
 var curpage;
 var bmFound;
 var uid;
-var searchstrictness = false;
 firebase.auth().onAuthStateChanged(function(user) {
 	  if (user) {
 		uid = user.uid;
@@ -36,61 +35,36 @@ function GetBookmarks(bm, d)
 		}
 	}
 }
-function SanitizeEmptyStrings(vals){// i really dont know how they get in there sometimes
-	var i;
-	for (i = 0; i < vals.length; i++){
-		if (vals[i] == ""){
-			vals.splice(i,1);
-			i -= 1;
-		}
-	}
-	console.log(vals);
-	return vals;
-}
 function FoundInput(data, vals){
 	var foundflag = false;
 	var k;
-	var strictsearch = true;
     vals.forEach(function(temp) {
-		var strictcheck = false;
 		var val = new RegExp(temp,"i");
 		var title = data.val().title;
 		var description = data.val().description;
 		var user = data.val().user;
 		if (val.test(title) == true){
-			strictcheck = true;
+			foundflag = true;
 		}
 		if (val.test(description) == true){
-			strictcheck = true;
+			foundflag = true;
 		}
 		if (val.test(user) == true){
-			strictcheck = true;
+			foundflag = true;
 		}
 		var ing = data.val().ingredients;
 		var i;
 		for (i = 0; i < ing.length; i++){
 		  if (val.test(ing[i]) == true){
-			  strictcheck = true;
+			  foundflag = true;
 		  }
 		}
-		if (strictcheck){
-			foundflag = true;
-		}
-		else{
-			strictsearch = false;
-		}
 	});
-	if (searchstrictness){
-		return strictsearch;
-	}
-	else{
-		return foundflag;
-	}
+	return foundflag;
 }
 function handleReturnToSearchInput(){
 	error = "";
 	searchval = "";
-	searchstrictness = false;
 	curpage = <InputSearchPage/>;
 	updateApp();
 }
@@ -112,7 +86,7 @@ function ParseSearchInput(){
 		searchValues = searchValues.concat(quotes);
 	}
 	console.log(searchValues);
-	return SanitizeEmptyStrings(searchValues);
+	return searchValues;
 }
 function RecipeSearch() {
 	
@@ -214,9 +188,6 @@ function handleSearchEvent(event){
 function handleChangeSearch(event){
 	searchval = event.target.value;
 }
-function handleChangeStrictness(event){
-	searchstrictness = event.target.value;
-}
 class InputSearchPage extends React.Component {
 	
 	render(){
@@ -227,14 +198,13 @@ class InputSearchPage extends React.Component {
 			<p>Please input your search terms:</p>
 		</h1>
 		<h2>
-			<input type="text" name="term" onChange={handleChangeSearch}/>
+			<input type="text" name="term" onChange={handleChangeSearch}/><br/>
 		</h2>
-			<input type="checkbox" name="termstrictness" onChange={handleChangeStrictness}/>Require every term to be found in order for a recipe to show in results?
 		<h3>
 			<p>{error}</p>
 		</h3>
 		<h4>
-			<p>Search terms are separated by spaces. Any recipe containing any term will be returned, unless the above textbox is checked. Then a recipe <i>must contain</i> each term in order to be indexed.</p>
+			<p>Search terms are separated by spaces. Any recipe containing any term will be returned.</p>
 			<p>Surround a search term in quotes to search for an exact term.</p>
 			<p>Example: Searching <i>peanut butter</i> will return recipes using peanuts or butter.</p>
 			<p>Searching <i>"peanut butter"</i> will return recipes using peanut butter.</p>
