@@ -8,40 +8,26 @@ import Bookmark from './bookmark.js';
 var listings = [];
 var uid;
 var i;
-var bmFound;
 
-function GetBookmarks(bm, d)
-{
-	bmFound = false;
-	var values = Object.values(bm.val().bookmarks);
-	var keys = Object.keys(bm.val().bookmarks);
-	for (i = 0; i < values.length; i++)
-	{
-		if (values[i] == d.key)
-		{
-			bmFound = true;
-		}
-	}
-}
-
-function RecipeIndex() {
+function RecipeBookmarks() {
 	firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     uid = user.uid;
-	listings.length = 0;
 
+		var bookmarks = firebase.database().ref("accounts/" + uid + "/bookmarks");
 
-		var recipe = firebase.database().ref("recipes");
-
-		recipe.orderByValue().on("value", function(snapshot) {
+		bookmarks.orderByValue().on("value", function(snapshot) {
 		  snapshot.forEach(function(data) {
-				var bookmark = firebase.database().ref("accounts/" + uid);
-				bookmark.on("value", function(snapshot)
+				var recipe = firebase.database().ref("recipes/" + data.val());
+				recipe.on("value", function(snapshot2)
 				{
-					GetBookmarks(snapshot, data);
-					var ing = data.val().ingredients;
-				  var meas = data.val().measurements;
-				  var stps = data.val().steps;
+					if (snapshot2.val().title != window.undefined)
+					{
+					console.log(Object.values(snapshot.val()));
+
+					var ing = snapshot2.val().ingredients;
+				  var meas = snapshot2.val().measurements;
+				  var stps = snapshot2.val().steps;
 					var ingList = [];
 					var stepsList = [];
 
@@ -56,10 +42,10 @@ function RecipeIndex() {
 				  var listing =
 					(
 					<div>
-				  <h1>{ data.val().title }</h1>
-					<Bookmark found={ bmFound } uid={ uid } rid={ data } bookmarks={ firebase.database().ref("accounts/" + uid).child("bookmarks") } keys={ Object.keys(snapshot.val().bookmarks) } values={ Object.values(snapshot.val().bookmarks) }/>
-				  <h2>{ data.val().description }</h2>
-				  <h2>Recipe by: { data.val().user }</h2>
+				  <h1>{ snapshot2.val().title }</h1>
+					<Bookmark found={ true } uid={ uid } rid={ snapshot2 } bookmarks={ firebase.database().ref("accounts/" + uid).child("bookmarks") } keys={ Object.keys(snapshot.val()) } values={ Object.values(snapshot.val()) }/>
+				  <h2>{ snapshot2.val().description }</h2>
+				  <h2>Recipe by: { snapshot2.val().user }</h2>
 					<h3>Ingredients</h3>
 				  <ol>
 					{ingList}
@@ -70,16 +56,17 @@ function RecipeIndex() {
 				  </ol>
 					</div>
 					)
-				listings.push(listing);
-			  });
+					listings.push(listing);
+				}
+				});
 			});
 		});
 	} else {
 	// No user is signed in.
 	}
-	});
+});
 }
-RecipeIndex();
+RecipeBookmarks();
 
 //this is the html for the login page
 class IndexPage extends React.Component {
