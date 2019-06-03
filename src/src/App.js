@@ -7,6 +7,8 @@ import updateApp from './index.js';
 var email;
 var userpassword;
 var userconfirmpassword;
+var uid;
+var database = firebase.database();
 var notifmessage = "";
 var registernotifmessage = "";
 var loggedIn;
@@ -18,7 +20,7 @@ firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     loggedIn = true;
 	currPage = <LoggedInPage/>;
-	
+
   } else {
     loggedIn = false;
 	currPage = <LoginPage/>;
@@ -66,7 +68,7 @@ class LoggedInPage extends React.Component {
 				<p> log out? </p>
 				<input type="submit" value="log off" onClick={logout}/>
 			</h2>
-			
+
 		  </header>
 		</div>
 	return page;
@@ -98,7 +100,7 @@ class RegisterPage extends React.Component {
 		</h4>
 	  </header>
 	</div>
-		
+
 	return page;
 	}
 }
@@ -158,22 +160,36 @@ function login(){
 	} else{
 		notifmessage = "sign in failed";
 	}
-	
 }
 function logout(){
 	firebase.auth().signOut();
 	user = firebase.auth().currentUser;
 	updateApp();
+	window.location.reload();
 }
 
 function register(){
 	if (userpassword === userconfirmpassword){
-		try{firebase.auth().createUserWithEmailAndPassword(email, userpassword);}
+		try
+			{
+				firebase.auth().createUserWithEmailAndPassword(email, userpassword)
+			}
 		catch(error){
 			console.log(error.message);
 			registernotifmessage = error.message;
 			updateApp();
 		}
+
+		firebase.auth().onAuthStateChanged(function(user) {
+  			if (user) {
+    				// User is signed in.
+				console.log('uid', user.uid);
+				firebase.database().ref('accounts/' + user.uid + '/bookmarks').set({0: ""});
+  			} else {
+    				// No user is signed in.
+  			}
+});
+
 	}
 	else{
 		registernotifmessage = "passwords do not match";
@@ -181,7 +197,6 @@ function register(){
 		updateApp();
 	}
 }
-
 
 currPage = <LoginPage/>;
 

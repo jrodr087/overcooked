@@ -4,7 +4,9 @@ import { generate } from "shortid";
 import TextForm, { title } from './title.js';
 import DescriptionForm, { description } from './description.js';
 import firebase from './firebase.js';
+import { PicUploader } from "./Pic.js";
 var userEmail = "";
+
 interface IngredientList {
   id: string;
   Ingredient: string;
@@ -27,10 +29,10 @@ const UploadRecipe = () => {
 	});
   var errorMessage = "";
   const [IngredientList, setIngredientList] = useState<IngredientList[]>([
-    { id: "5", Ingredient: "Ingredient", Measurement: "Measurement"}
+    { id: generate(), Ingredient: "Ingredient", Measurement: "Measurement"}
   ]);
   const [StepList, setStepList] = useState<StepList[]>([
-    { id: "5", Step: "Steps"}
+    { id: generate(), Step: "Steps"}
   ]);
   
   
@@ -79,14 +81,29 @@ const UploadRecipe = () => {
 		  measurements: tempmeaslist
 		});
 	}
+
+
 	if (user){
 	  return (
 			<div style={{ textAlign: "center" }}>
 				<TextForm />
+				<button
+					onClick={() => {
+					  console.log({ title });
+					}}
+				> log title</button>
 				<DescriptionForm />
+				<button
+					onClick={() => {
+					  console.log({ description });
+					}}
+				>log description</button>
+       <br></br>
+				{/* Add image */}
+				<PicUploader/>
 				
-			  <button
-				onClick={() => {
+				{/* <button
+				   onClick={() => {
 				  setIngredientList(currentIngredientList => [
 					...currentIngredientList,
 					{
@@ -96,9 +113,9 @@ const UploadRecipe = () => {
 					}
 				  ]);
 				}}
-			  >
-				add new ingredient
-			  </button>
+			  >Add Ingredient</button> */}
+				
+			  
 			  {IngredientList.map((ing, index) => {
 				return (
 				  <div key={ing.id}>
@@ -114,7 +131,6 @@ const UploadRecipe = () => {
 					  value={ing.Ingredient}
 					  placeholder="Ingredient"
 					/>
-
 					<input
 					  onChange={e => {
 						const Measurement = e.target.value;
@@ -127,6 +143,20 @@ const UploadRecipe = () => {
 					  value={ing.Measurement}
 					  placeholder="Measurement"
 					/>
+
+				<button
+				   onClick={() => {
+				  setIngredientList(currentIngredientList => [
+					...currentIngredientList,
+					{
+					  id: generate(),
+					  Ingredient: "",
+					  Measurement: "",
+					}
+				  ]);
+				}}
+			  >Add Ingredient</button> 
+
 					<button
 					  onClick={() => {
 						setIngredientList(currentIngredientList =>
@@ -139,25 +169,25 @@ const UploadRecipe = () => {
 				  </div>
 				);
 			  })}
-				<button
+				{/* <button
 					onClick={() => {
 					  console.log({ title });
 					}}
 				>
 					log title
-				</button>
-				<button
+				</button> */}
+			{/* 	<button
 					onClick={() => {
 					  console.log({ description });
 					}}
 				>
 					log description
-				</button>
-			  <div>{JSON.stringify(IngredientList, null, 2)}</div>
+				</button> */}
+			   {/* <div>{JSON.stringify(IngredientList, null, 2)}</div>  */}
 
 			  
 
-			  <button
+			  {/* <button
 				onClick={() => {
 				  setStepList(currentStepList => [
 					...currentStepList,
@@ -169,7 +199,9 @@ const UploadRecipe = () => {
 				}}
 			  >
 				add new Step
-			  </button>
+				</button> */}
+			<br></br>
+			
 			  {StepList.map((ing, index) => {
 				return (
 				  <div key={ing.id}>
@@ -185,6 +217,19 @@ const UploadRecipe = () => {
 					  value={ing.Step}
 					  placeholder="Steps"
 					/>
+					<button
+				onClick={() => {
+				  setStepList(currentStepList => [
+					...currentStepList,
+					{
+					  id: generate(),
+					  Step: "",
+					}
+				  ]);
+				}}
+			  >
+				add new Step
+			  </button>
 
 					<button
 					  onClick={() => {
@@ -203,7 +248,7 @@ const UploadRecipe = () => {
 				  upload recipe
 					</button>
 				</div>
-			  <div>{JSON.stringify(StepList, null, 2)}</div>
+			    {/* <div>{JSON.stringify(StepList, null, 2)}</div>  */}
 			
 			  <div>
 				<p>{errorMessage}</p>
