@@ -4,9 +4,9 @@ import { generate } from "shortid";
 import TextForm, { title } from './title.js';
 import DescriptionForm, { description } from './description.js';
 import firebase from './firebase.js';
-import updateApp from './index.js';
 import { PicUploader } from "./Pic.js";
 var userEmail = "";
+
 interface IngredientList {
   id: string;
   Ingredient: string;
@@ -29,11 +29,12 @@ const UploadRecipe = () => {
 	});
   var errorMessage = "";
   const [IngredientList, setIngredientList] = useState<IngredientList[]>([
-    { id: "0", Ingredient: "Ingredient", Measurement: "Measurement"}
+    { id: generate(), Ingredient: "Ingredient", Measurement: "Measurement"}
   ]);
   const [StepList, setStepList] = useState<StepList[]>([
-    { id: "0", Step: "Steps"}
+    { id: generate(), Step: "Steps"}
   ]);
+  
   
 	function writeUserData() {
 		var i;
@@ -79,7 +80,6 @@ const UploadRecipe = () => {
 		  ingredients: tempinglist,
 		  measurements: tempmeaslist
 		});
-	  window.location.reload();
 	}
 
 
@@ -87,14 +87,22 @@ const UploadRecipe = () => {
 	  return (
 			<div style={{ textAlign: "center" }}>
 				<TextForm />
-			
+				<button
+					onClick={() => {
+					  console.log({ title });
+					}}
+				> log title</button>
 				<DescriptionForm />
-			
+				<button
+					onClick={() => {
+					  console.log({ description });
+					}}
+				>log description</button>
        <br></br>
 				{/* Add image */}
 				<PicUploader/>
 				
-				<button
+				{/* <button
 				   onClick={() => {
 				  setIngredientList(currentIngredientList => [
 					...currentIngredientList,
@@ -105,7 +113,7 @@ const UploadRecipe = () => {
 					}
 				  ]);
 				}}
-			  >Add Ingredient</button>
+			  >Add Ingredient</button> */}
 				
 			  
 			  {IngredientList.map((ing, index) => {
@@ -148,7 +156,7 @@ const UploadRecipe = () => {
 				  ]);
 				}}
 			  >Add Ingredient</button> 
-		
+
 					<button
 					  onClick={() => {
 						setIngredientList(currentIngredientList =>
@@ -161,10 +169,25 @@ const UploadRecipe = () => {
 				  </div>
 				);
 			  })}
+				{/* <button
+					onClick={() => {
+					  console.log({ title });
+					}}
+				>
+					log title
+				</button> */}
+			{/* 	<button
+					onClick={() => {
+					  console.log({ description });
+					}}
+				>
+					log description
+				</button> */}
+			   {/* <div>{JSON.stringify(IngredientList, null, 2)}</div>  */}
 
 			  
-				<br></br>
-			  <button
+
+			  {/* <button
 				onClick={() => {
 				  setStepList(currentStepList => [
 					...currentStepList,
@@ -176,7 +199,7 @@ const UploadRecipe = () => {
 				}}
 			  >
 				add new Step
-				</button>
+				</button> */}
 			<br></br>
 			
 			  {StepList.map((ing, index) => {
@@ -225,7 +248,8 @@ const UploadRecipe = () => {
 				  upload recipe
 					</button>
 				</div>
-			  
+			    {/* <div>{JSON.stringify(StepList, null, 2)}</div>  */}
+			
 			  <div>
 				<p>{errorMessage}</p>
 			  </div>
