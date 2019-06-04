@@ -8,6 +8,7 @@ import UploadRecipe from './RecipeUpload.tsx'
 import RecipeIndex from './RecipeIndex.js'
 import RecipeBookmarks from './RecipeBookmarks.js'
 import Search from './RecipeSearch.js'
+import Edit from './Edit.js'
 
 class Main extends React.Component {
 	render(){
@@ -20,14 +21,16 @@ class Main extends React.Component {
 				<li><Link to="/recipeUpload">Upload a Recipe</Link></li>
 				<li><Link to="/recipeIndex">Recipe index</Link></li>
 				<li><Link to="/recipeBookmarks">Bookmarked recipes</Link></li>
-				<li><Link to="/recipeSearch">Recipe search</Link></li>
+                <li><Link to="/recipeSearch">Recipe search</Link></li>
+                <li><Link to="/Edit">Edit My Recipe</Link></li>
 			  </ul>
 			  <div className="content">
 			  <Route path="/" exact component={App}/>
 				<Route path="/recipeUpload" component={UploadRecipe}/>
 				<Route path="/recipeIndex" component={RecipeIndex}/>
 				<Route path="/recipeBookmarks" component={RecipeBookmarks}/>
-				<Route path="/recipeSearch" component={Search}/>
+                <Route path="/recipeSearch" component={Search} />
+                <Route path="/Edit" component={Edit} />
 			  </div>
 		</div>
 		</Router>
